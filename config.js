@@ -1,7 +1,7 @@
 let success=1;
 try
 {
-    let fail=0,script="";
+    let fail=0,script;
     $.ajax("https://raw.githubusercontent.com/Bhpsngum/img-src/master/main.js")
     .done(function (data) {
         script="function data(){"+data+"}";
