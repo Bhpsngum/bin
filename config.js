@@ -5,6 +5,9 @@ try
     $.ajax("https://raw.githubusercontent.com/Bhpsngum/img-src/master/main.js")
     .done(function (response) {
         eval("function init(){"+response+"}");
+        
+        let parsed = new init();
+        
         function checkTicks(game)
         {
             return parsed.tick(game)
