@@ -131,11 +131,10 @@ const AlienExtender = {
     return this.set({
       kill: true
     });
-  },
-  laserSpeed: function (data) {
-    return this.laser_speed(data);
   }
 };
+
+Object.assign(Asteroid.prototype, AlienExtender);
 
 for (let prop of ["shield","regen","damage","laser_speed","rate"])
   eval(`AlienExtender.${prop} = function(data) {
@@ -144,7 +143,11 @@ for (let prop of ["shield","regen","damage","laser_speed","rate"])
     });
     return this;
   }`);
-  
+
+AlienExtender.laserSpeed: function (data) {
+    return this.laser_speed(data);
+}
+
 Object.assign(game, GameExtender);
 Object.assign(I1l00.prototype, ShipExtender);
 Object.assign(Alien.prototype, AlienExtender);
