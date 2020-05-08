@@ -5,7 +5,8 @@ try
     .done(function (data) {
         eval("function data(){"+data+"}");
     })
-    .fail(() => {fail=1;});
+    .fail(() => {console.log(e);fail=1;});
+    
     if (fail) throw "Fetching failed";
     
     let parsed = new data();
