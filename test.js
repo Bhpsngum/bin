@@ -144,7 +144,7 @@ for (let prop of ["shield","regen","damage","laser_speed","rate"])
     return this;
   }`);
 
-AlienExtender.laserSpeed: function (data) {
+AlienExtender.laserSpeed = function (data) {
     return this.laser_speed(data);
 }
 
@@ -156,7 +156,7 @@ function checkTicks (game)  // all commands for tick goes here
 {
     game.updateShips();
     game.checkForTimers();
-    game.checkForIntervals()
+    game.checkForIntervals();
 }
 
 function checkEvents (event, game)  // all commands for events handling goes here
