@@ -1,26 +1,28 @@
 let success=1;
 try
 {
-    let fail=0;
+    let fail=0,script="";
     $.ajax("https://raw.githubusercontent.com/Bhpsngum/img-src/master/main.js")
     .done(function (data) {
-        eval("function data(){"+data+"}");
-        let parsed = new data();
-    
-        function checkTicks(game)
-        {
-            return parsed.tick(game)
-        }
-
-        function checkEvents(event, game)
-        {
-            return parsed.event(event, game);
-        }
+        script="function data(){"+data+"}";
     })
     .fail(() => {fail=1;});
     
     if (fail) throw "Fetching failed";
     
+    eval(script);
+    
+    let parsed = new data();
+    
+    function checkTicks(game)
+    {
+        return parsed.tick(game)
+    }
+
+    function checkEvents(event, game)
+    {
+        return parsed.event(event, game);
+    }
     game.modding.tick = function(t) {
         var e;
         if (this.game.tick(t), e = Date.now(), checkTicks(this.game), null != this.context.tick && this.context.tick(this.game), e = Date.now() - e, this.max_tick_time = Math.max(this.max_tick_time, e), this.tick_time += e, this.tick_count += 1, this.tick_count >= 600) return this.terminal.echo("Tick CPU time: average " + Math.round(this.tick_time / this.tick_count) + " ms ; max " + Math.round(this.max_tick_time) + " ms"), this.terminal.echo("Data sent: " + Math.round(this.I1I0I.log_sent / this.tick_count * 60) + " bytes per second"), this.tick_count = 0, this.tick_time = 0, this.max_tick_time = 0, this.I1I0I.log_sent = 0
