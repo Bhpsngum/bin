@@ -1,3 +1,4 @@
+let success=1;
 try
 {
     let fail=0;
@@ -48,6 +49,8 @@ try
 }
 catch(e)
 {
+    success=0;
     console.log(e);
     game.modding.terminal.error("An error occured while executing the Modding+ extensions!");
 }
+(success) && echo("Successfully initialized Modding+ extensions into the Modding engine!");
