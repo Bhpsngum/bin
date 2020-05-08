@@ -53,4 +53,4 @@ catch(e)
     console.log(e);
     game.modding.terminal.error("An error occured while executing the Modding+ extensions!");
 }
-(success) && echo("Successfully initialized Modding+ extensions into the Modding engine!");
+(success) && game.modding.terminal.echo("Successfully initialized Modding+ extensions into the Modding engine!");
