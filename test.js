@@ -195,5 +195,5 @@ try
 }
 catch(e)
 {
-    game.modding.terminal.error("An error occured while executing the extensions!");
+    game.modding.terminal.error("An error occured while executing the Modding+ extensions!");
 }
