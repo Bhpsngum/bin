@@ -12,6 +12,8 @@ try
     
     eval(script);
     
+    console.log(data);
+    
     let parsed = new data();
     
     function checkTicks(game)
