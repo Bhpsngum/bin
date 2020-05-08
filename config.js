@@ -5,7 +5,7 @@ try
     .done(function (data) {
         eval("function data(){"+data+"}");
     })
-    .fail(() => {console.log(e);fail=1;});
+    .fail(() => {fail=1;});
     
     if (fail) throw "Fetching failed";
     
@@ -48,5 +48,6 @@ try
 }
 catch(e)
 {
+    console.log(e);
     game.modding.terminal.error("An error occured while executing the Modding+ extensions!");
 }
