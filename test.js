@@ -61,7 +61,7 @@ try
             this.timers.forEach(function (timer) {
                 let game = timer[2];
                 if (game.step >= timer[1]) {
-                    timer[0]();
+                    (typeof timer[0] == "function") && timer[0]();
                     game.timers.delete(timer);
                 }
             });
@@ -69,7 +69,7 @@ try
         checkForIntervals: function () {
             this.intervals.forEach(function (interval) {
                 if (game.step % interval[1] === 0) {
-                    interval[0]();
+                    (typeof interval[0] == "function") && interval[0]();
                 }
             });
         },
