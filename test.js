@@ -175,7 +175,7 @@ try
         if (null != t.data) {
             null != t.data.ship && (r = this.modding.game.findShip(t.data.ship), t.data.ship = r), null != t.data.killer && (n = this.modding.game.findShip(t.data.killer), t.data.killer = n), null != t.data.alien && (e = this.modding.game.findAlien(t.data.alien), t.data.alien = e), null != t.data.asteroid && (i = this.modding.game.findAsteroid(t.data.asteroid), t.data.asteroid = i), null != t.data.collectible && (s = this.modding.game.findCollectible(t.data.collectible), t.data.collectible = s);
             try {
-                null != this.modding.context.event && (console.log(t.data,this.modding.game),checkEvents(t.data, this.modding.game), this.modding.context.event(t.data, this.modding.game))
+                checkEvents(t.data, this.modding.game), null != this.modding.context.event && this.modding.context.event(t.data, this.modding.game)
             } catch (t) {
                 t
             }
