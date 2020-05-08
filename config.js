@@ -10,12 +10,12 @@ try
         
         function checkTicks(game)
         {
-            return parsed.tick(game)
+            return parsed.tick && parsed.tick(game);
         }
 
         function checkEvents(event, game)
         {
-            return parsed.event(event, game);
+            return parsed.event && parsed.event(event, game);
         }
         game.modding.tick = function(t) {
             var e;
