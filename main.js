@@ -152,20 +152,12 @@ Object.assign(Alien.prototype, AlienExtender);
 
 /* End of initial setup */
 
-this.options = {
-    // see documentation for options reference
-    root_mode: "survival",
-    map_size: 30
-};
-
 this.tick = function (game) {
     game.updateShips();
     game.checkForTimers();
     game.checkForIntervals();
-    // do mod stuff here ; see documentation
 };
 
 this.event = function (event, game) {
     game.updateShips(event);
-    // Place your event handler code here
 }
