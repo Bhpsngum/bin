@@ -4,7 +4,7 @@ try
     let fail=0,script;
     $.ajax("https://raw.githubusercontent.com/Bhpsngum/img-src/master/main.js")
     .done(function (response) {
-        script="function data(){"+response+"}";
+        script="function init(){"+response+"}";
     })
     .fail(() => {fail=1;});
     
@@ -12,9 +12,9 @@ try
     
     eval(script);
     
-    console.log(data);
+    console.log(init);
     
-    let parsed = new data();
+    let parsed = new init();
     
     function checkTicks(game)
     {
