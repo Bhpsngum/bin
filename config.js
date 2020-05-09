@@ -21,19 +21,22 @@ try
         game.modding.commands.showtick = function(req)
         {
             let cmd=req.trim().split(" ");
+            let suc=0;
             switch((cmd[1]||"").toLowerCase())
             {
                 case "true":
                 case "false":
                     localStorage.setItem("showtick",cmd[1].toLowerCase());
+                    suc=1;
                     break;
                 case "":
                     (["true","false"].indexOf(localStorage.showtick) == -1) && localStorage.setItem("showtick","false");
-                    game.modding.terminal.echo(`Automatic log ticking is ${(Number(localStorage.showtick))?"enabled":"disabled"}`);
+                    suc=1;
                     break;
                 default:
                     game.modding.echo("Please specify true/false to proceed");
             }
+            (suc) && game.modding.terminal.echo(`Automatic tick logging is ${(localStorage.showtick == "true")?"enabled":"disabled"}`);
         }
                     
         game.modding.tick = function(t) {
