@@ -30,7 +30,7 @@ try
                     suc=1;
                     break;
                 case "":
-                    (["true","false"].indexOf(localStorage.showtick) == -1) && localStorage.setItem("showtick","false");
+                    (["true","false"].indexOf(localStorage.showtick) == -1) && localStorage.setItem("showtick","true");
                     suc=1;
                     break;
                 default:
