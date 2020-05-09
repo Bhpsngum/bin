@@ -17,9 +17,28 @@ try
         {
             return parsed.event && parsed.event(event, game);
         }
+        
+        game.modding.commands.showtick = function(req)
+        {
+            let cmd=req.trim().split(" ");
+            switch((cmd[1]||"").toLowerCase())
+            {
+                case "true":
+                case "false":
+                    localStorage.setItem("showtick",cmd[1].toLowerCase());
+                    break;
+                case "":
+                    (["true","false"].indexOf(localStorage.showtick) == -1) && localStorage.setItem("showtick","false");
+                    game.modding.terminal.echo(`Automatic log ticking is ${(Number(localStorage.showtick))?"enabled":"disabled"}`);
+                    break;
+                default:
+                    game.modding.echo("Please specify true/false to proceed");
+            }
+        }
+                    
         game.modding.tick = function(t) {
             var e;
-            if (this.game.tick(t), e = Date.now(), checkTicks(this.game), null != this.context.tick && this.context.tick(this.game), e = Date.now() - e, this.max_tick_time = Math.max(this.max_tick_time, e), this.tick_time += e, this.tick_count += 1, this.tick_count >= 600) return this.terminal.echo("Tick CPU time: average " + Math.round(this.tick_time / this.tick_count) + " ms ; max " + Math.round(this.max_tick_time) + " ms"), this.terminal.echo("Data sent: " + Math.round(this.I1I0I.log_sent / this.tick_count * 60) + " bytes per second"), this.tick_count = 0, this.tick_time = 0, this.max_tick_time = 0, this.I1I0I.log_sent = 0
+            if (this.game.tick(t), e = Date.now(), checkTicks(this.game), null != this.context.tick && this.context.tick(this.game), e = Date.now() - e, this.max_tick_time = Math.max(this.max_tick_time, e), this.tick_time += e, this.tick_count += 1, this.tick_count >= 600) return ((localStorage.showtick||"true") === "true")?(this.terminal.echo("Tick CPU time: average " + Math.round(this.tick_time / this.tick_count) + " ms ; max " + Math.round(this.max_tick_time) + " ms"), this.terminal.echo("Data sent: " + Math.round(this.I1I0I.log_sent / this.tick_count * 60) + " bytes per second")):void 0, this.tick_count = 0, this.tick_time = 0, this.max_tick_time = 0, this.I1I0I.log_sent = 0
         }
         lOlO0.prototype.eventReceived = function(t) {
             var e, i, s, n, r;
