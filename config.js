@@ -76,4 +76,8 @@ catch(e)
     console.log(e);
     game.modding.terminal.error("An error occured while executing the Modding+ extensions!");
 }
-(success) && game.modding.terminal.echo("Successfully initialized Modding+ extensions into the Modding engine!");
+(success) && game.modding.terminal.echo("Successfully initialized Modding+ extensions into the Modding engine!\nRead the documentation ",
+    {finalize: function($div){
+        $div.children().last().append('<a href="https://github.com/dpleshkov/starblast-modding-plus/blob/master/docs.md" title="Modding+ Documentation" target="_blank">here</a>')
+    }}
+);
