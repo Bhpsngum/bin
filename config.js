@@ -4,7 +4,9 @@ try
     let fail=0;
     $.ajax("https://raw.githubusercontent.com/Bhpsngum/starblast-modding-plus/master/main.js")
     .done(function (response) {
-        eval("function init(){"+response+"}");
+        let init;
+        
+        eval("init = function (){"+response+"}");
         
         let parsed = new init();
         
