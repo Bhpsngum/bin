@@ -68,10 +68,7 @@ try
           },
           shipDisconnected: function(t) {
             var e=this.modding.game.findShip(t.id);
-            if (e != null) {
-              this.context.event != null && this.context.event({name:"ship_disconnected",ship:e},this.modding.game);
-              return e.lI101 = !0
-            }
+            if (e != null) return this.context.event != null && this.context.event({name:"ship_disconnected",ship:e},this.modding.game),e.lI101 = !0
           }
         });
     })
