@@ -309,7 +309,7 @@ this.event = function (event,game){
         ship.setUIComponent({id:"ship text",visible:false});    
         ship.custom.shiped = true;
       } else if (component == "ship2"){  
-        ship.set({type:data[1],invulnerable:400,stats:88888888,idle:false,shield:999});
+        ship.set({type:data[1].code,invulnerable:400,stats:88888888,idle:false,shield:999});
         ship.set({crystals:((Math.round(6||0)**2)*20/4)});
         ship.setUIComponent({id:"ship1",visible:false});      
         ship.setUIComponent({id:"ship2",visible:false});      
