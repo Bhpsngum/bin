@@ -135,7 +135,9 @@ this.options = {
   speed_mod: 1.2,
   mines_destroy_delay: 2
 };
- 
+function rand(lol){
+  return ~~((Math.random() * lol));
+};
 function splitIntoTeams(){
   let ts = [
     {hue:0,x:-215,y:0}, {hue:240,x:215,y:0}
@@ -181,12 +183,12 @@ function resetgame(game){
     data=randomShips();
     for (let ship of game.ships){
       ship.setUIComponent({id: "gamestat", visible: false});      
-      selectship(ship,data);
+      selectship(ship);
     }  
   }, 5000);  
 }
  
-function selectship(ship,chooseShips){
+function selectship(ship){
   ship.custom.shiped = false;
   ship.set({idle:true});
   ship.frag = 0; redpoints = 0; bluepoints = 0;  
@@ -200,14 +202,14 @@ function selectship(ship,chooseShips){
     id: "ship1", position: [22.5,39,22,45], clickable: true, visible: true,
     components: [
       { type:"box",position:[0,0,100,100],fill:"rgb(54,57,64,0.6)",stroke:"#fff",width:10},
-      { type: "text",position:[22.5,0,50,30],value:chooseShips[0].name,color:"#FFFFFF"},
+      { type: "text",position:[22.5,0,50,30],value:data[0].name,color:"#FFFFFF"},
     ]
   });
   ship.setUIComponent({
     id: "ship2", position: [55,39,22,45], clickable: true, visible: true,
     components: [
       { type:"box",position:[0,0,100,100],fill:"rgb(54,57,64,0.6)",stroke:"#fff",width:10},
-      { type: "text",position:[22.5,0,50,30],value:chooseShips[1].name,color:"#FFFFFF"},
+      { type: "text",position:[22.5,0,50,30],value:data[1].name,color:"#FFFFFF"},
     ]
   });  
   setTimeout(function(){
@@ -215,7 +217,7 @@ function selectship(ship,chooseShips){
     ship.setUIComponent({id:"ship1",visible:false});
     ship.setUIComponent({id:"ship2",visible:false});
     if (!ship.custom.shiped){
-      ship.set({type:chooseShips[rand(2)],crystals:(Math.round(6||0)**2)*20/3,invulnerable:400,stats:88888888,idle:false,shield:999});
+      ship.set({type:data[rand(2)].code,crystals:~~((Math.trunc(data[1].code/100)**2)*20/3),invulnerable:400,stats:88888888,idle:false,shield:999});
       ship.custom.shiped = true;
     }
   }, 10000);    
@@ -227,9 +229,6 @@ function randomShips(){
   return round_ships;
 }
 let data=randomShips(); 
-rand = function(lol){
-  return ~~((Math.random() * lol));
-};
  
 this.tick = function (game){
   if (game.step % 30 === 0){
@@ -242,7 +241,7 @@ this.tick = function (game){
       if (!ship.custom.init){
         ship.custom.init = true;
         setteam(ship);
-        selectship(ship,data);
+        selectship(ship);
         ship.frag=0;
         ship.death=0;      
       } ship.set({score:ship.frag});
@@ -273,7 +272,10 @@ this.tick = function (game){
       }
     }        
   }
+  if (game.step % 60 === 0) checkteambase();
   if (game.step % 700 === 0) spawnSecondary();
+  // for (let alien of game.aliens)
+  //   if (alien.code == 13) alien.set({kill:true});
 };
  
 this.event = function (event,game){
@@ -303,14 +305,14 @@ this.event = function (event,game){
       var component = event.id;
       if (component == "ship1"){
         ship.set({type:data[0].code,invulnerable:400,stats:88888888,idle:false,shield:999});
-        ship.set({crystals:((Math.round(6||0)**2)*20/4)});
+        ship.set({crystals:~~((Math.trunc(data[1].code/100)**2)*20/3)});
         ship.setUIComponent({id:"ship1",visible:false});      
         ship.setUIComponent({id:"ship2",visible:false});      
         ship.setUIComponent({id:"ship text",visible:false});    
         ship.custom.shiped = true;
       } else if (component == "ship2"){  
         ship.set({type:data[1].code,invulnerable:400,stats:88888888,idle:false,shield:999});
-        ship.set({crystals:((Math.round(6||0)**2)*20/4)});
+        ship.set({crystals:~~((Math.trunc(data[1].code/100)**2)*20/3)});
         ship.setUIComponent({id:"ship1",visible:false});      
         ship.setUIComponent({id:"ship2",visible:false});      
         ship.setUIComponent({id:"ship text",visible:false});
@@ -340,13 +342,39 @@ function yeetalien(game){
 function distance(x,y){
   return Math.sqrt(x*x+y*y);
 }
- 
+// game.addGem = function(obj)
+// {
+//   let x=obj.x||0,y=obj.y||0,value=obj.value||0;
+//   game.addAlien({x:x,y:y,crystal_drop:value,code:13});
+// }
+function rekt(ship,num)
+{
+  let p=[-1,1],val;
+  if (ship.shield<num)
+  {
+    if (ship.crystals < num)
+    {
+      val=ship.crystals;
+      ship.set({crystals:0})
+      ship.set({kill:true});
+      //game.addGem({x:ship.x+3*p[rand(2)],y:ship.y+3*p[rand(2)],value:val});
+    }
+    else
+    {
+      val = ship.shield-num;
+      ship.set({crystals:ship.crystals+val});
+      ship.set({shield:0});
+      //game.addGem({x:ship.x+3*p[rand(2)],y:ship.y+3*p[rand(2)],value:val});
+    }
+  }
+  else ship.set({shield:ship.shield-num});
+}
 function checkteambase(){
   for (let ship of game.ships){
     if (ship.team === 0){
-      if (ship.x > 185 && ship.x < 240 && Math.abs(ship.y) < 35) echo("team red base");
+      if (ship.x > 185 && ship.x < 240 && Math.abs(ship.y) < 35) rekt(ship,~~(ship.type/100)*20);
     } else if (ship.team === 1){
-      if (ship.x > -185 && ship.x < -240 && Math.abs(ship.y) < 35) echo("team blue base");
+      if (ship.x > -185 && ship.x < -240 && Math.abs(ship.y) < 35) rekt(ship,~~(ship.type/100)*20);
     }  
   }
 }
@@ -450,7 +478,6 @@ function updatescoreboard(game){
     }
     line++;
   }
-  console.log(scoreboard);
   outputscoreboard(game,sc);
 }
  
@@ -460,7 +487,6 @@ function outputscoreboard(game,tm){
     let j=0,team=tm[ship.team];
     for (j=0;j<team.length;j++){
       if (ship.id === team[j].id){
-        console.log((j*2+ship.team)*2+1);
         scoreboard.components.splice((j*2+ship.team)*2+4,0,
           new PlayerBox(ship.team*50,(j+1)*10)  
         );
@@ -473,7 +499,6 @@ function outputscoreboard(game,tm){
       new Tag("player",ship.id,ship.team*50,90,ship.team,"left")
     );
     ship.setUIComponent(scoreboard);
-    console.log(JSON.stringify(scoreboard));
     scoreboard.components = [...origin];
   }
 }
