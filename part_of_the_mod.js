@@ -224,7 +224,6 @@ function selectship(ship,chooseShips){
 function randomShips(){
   let round_ships=[],s=JSON.parse(JSON.stringify(select_ships)),r=rand(s.length);
   for (let i of [,,]) round_ships.push(...s[r].splice(rand(s[r].length),1));
-  echo(round_ships); echo(select_ships);
   return round_ships;
 }
 let data=randomShips(); 
@@ -236,25 +235,16 @@ this.tick = function (game){
   if (game.step % 30 === 0){
     if (!game.custom.alien){
       game.custom.alien = true;
-      randomShips();
+      data=randomShips();
       game.addAlien({x:195,y:195,level:2});game.addAlien({x:-195,y:195,level:2});game.addAlien({x:-195,y:-195,level:2});game.addAlien({x:195,y:-195,level:2});
     }
     for (let ship of game.ships){
       if (!ship.custom.init){
         ship.custom.init = true;
         setteam(ship);
-        selectship(ship);
+        selectship(ship,data);
         ship.frag=0;
-        ship.death=0;
-        ship.setUIComponent({
-          id: "ThisIsForTestingPurposes",
-          position: [3,30,12,10],
-          visible: true,
-          clickable: true,
-          components: [
-            {type: "text",position:[0,0,80,33],value:"Switch team",color:"#fff"},
-          ]
-        });        
+        ship.death=0;      
       } ship.set({score:ship.frag});
     }
     updatescore(game);
@@ -312,28 +302,20 @@ this.event = function (event,game){
       var ship = event.ship;
       var component = event.id;
       if (component == "ship1"){
-        ship.set({type:round_ships[0],invulnerable:400,stats:88888888,idle:false,shield:999});
+        ship.set({type:data[0].code,invulnerable:400,stats:88888888,idle:false,shield:999});
         ship.set({crystals:((Math.round(6||0)**2)*20/4)});
         ship.setUIComponent({id:"ship1",visible:false});      
         ship.setUIComponent({id:"ship2",visible:false});      
         ship.setUIComponent({id:"ship text",visible:false});    
         ship.custom.shiped = true;
       } else if (component == "ship2"){  
-        ship.set({type:round_ships[1],invulnerable:400,stats:88888888,idle:false,shield:999});
+        ship.set({type:data[1],invulnerable:400,stats:88888888,idle:false,shield:999});
         ship.set({crystals:((Math.round(6||0)**2)*20/4)});
         ship.setUIComponent({id:"ship1",visible:false});      
         ship.setUIComponent({id:"ship2",visible:false});      
         ship.setUIComponent({id:"ship text",visible:false});
         ship.custom.shiped = true;
-      } else if (component == "ThisIsForTestingPurposes"){
-        switchteam(ship)    
-        const shield = shields[ship.type];
-        const stat = Math.trunc(ship.stats / 1e7);
-        const shield_cap = shield.delta * stat / shield.level + shield.min;    
-        ship.set({shield:ship.shield+shield_cap/4});
-        var aa = shield[ship.name]
-        echo(aa)
-      }  
+      }
     break;
     case "alien_destroyed":
       let s = [11,11,12],a;
@@ -344,9 +326,9 @@ this.event = function (event,game){
   }
 };
  
-switchteam = function(ship,thisIsForTestingPurposes){
-  var h,t,x,y=0; if (ship.team === 0){t=1;h=240;x=215;} else if (ship.team === 1){t=0;h=0;x=-215}
-  ship.set({team:t,hue:h,x:x,y:y,stats:88888888});
+switchteam = function(id,thisIsForTestingPurposes){
+  var h,t,x,y=0; if (game.ships[0].team === 0){t=1;h=240;x=215;} else if (game.ships[0].team === 1){t=0;h=0;x=-215}
+  game.ships[id].set({team:t,hue:h,x:x,y:y,stats:88888888});
 }
  
 function yeetalien(game){
@@ -499,6 +481,7 @@ function outputscoreboard(game,tm){
 var redpoints = 0, bluepoints = 0, gamelength = 6.3;
 function updatescore(game){
   for (let ship of game.ships){
+   ship.setUIComponent({
       id: "points",
       position: [40,6,26,20],
       visible: true,
