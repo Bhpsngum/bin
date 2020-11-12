@@ -47,7 +47,7 @@
       let members = this.members.filter(i => (i && i?.id)).map(i => i.id);
       ids = (ids.length != 0)?ids:members;
       for (let id of ids) {
-        let error = "Failed to remove the bot (ID "+id+") from the game!\nTerminated the bot instead.";
+        let error = "Failed to remove the bot (ID "+id+") from the game!";
         if (members.indexOf(Number(id)||0) == -1) showError(error);
         else {
           let fail = destroy(id);
