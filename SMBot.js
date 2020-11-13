@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Starblast Modding Bot
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  Make some ships join your created game!
 // @author       Bhpsngum
 // @match        https://starblast.data.neuronality.com/modding/moddingcontent.html
@@ -25,7 +25,7 @@
     name: "",
     create: function() {
       refresh();
-      let Ball = new WebSocket("wss://"+this.address.ip+".starblast.io:"+this.address.port+"/"), index = this.members.length+1;
+      let Ball = new WebSocket("wss://"+this.address.ip+".starblast.io:"+this.address.port+"/");
       Ball.onopen = function(){
         this.send('{"name":"join","data":{"mode":"survival","spectate":false,"spectate_ship":1,"player_name":"'+(Bot.name.toUpperCase()||"DUMMY")+' '+index+'","hue":288,"preferred":'+Bot.address.id+',"bonus":false,"ecp_key":null,"steamid":null,"ecp_custom":{"badge":"star","finish":"alloy","laser":"1"},"create":false,"client_ship_id":"425271352936625943","client_tr":1}}');
         this.send('{"name":"enter","data":{"spectate":false}}');
@@ -40,7 +40,7 @@
       }
       Ball.id = request_id++;
       this.members.push(Ball);
-      return index;
+      return Ball.id;
     },
     remove: function(...ids) {
       refresh();
