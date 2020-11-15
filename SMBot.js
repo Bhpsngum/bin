@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Starblast Modding Bot
 // @namespace    http://tampermonkey.net/
-// @version      1.2
+// @version      1.3
 // @description  Make some ships join your created game!
 // @author       Bhpsngum
 // @match        https://starblast.data.neuronality.com/modding/moddingcontent.html
@@ -26,8 +26,9 @@
     create: function() {
       refresh();
       let Ball = new WebSocket("wss://"+this.address.ip+".starblast.io:"+this.address.port+"/");
+      Ball.id = request_id++;
       Ball.onopen = function(){
-        this.send('{"name":"join","data":{"mode":"survival","spectate":false,"spectate_ship":1,"player_name":"'+(Bot.name.toUpperCase()||"DUMMY")+' '+index+'","hue":288,"preferred":'+Bot.address.id+',"bonus":false,"ecp_key":null,"steamid":null,"ecp_custom":{"badge":"star","finish":"alloy","laser":"1"},"create":false,"client_ship_id":"425271352936625943","client_tr":1}}');
+        this.send('{"name":"join","data":{"mode":"survival","spectate":false,"spectate_ship":1,"player_name":"'+(Bot.name.toUpperCase()||"DUMMY")+' '+this.id+'","hue":288,"preferred":'+Bot.address.id+',"bonus":false,"ecp_key":null,"steamid":null,"ecp_custom":{"badge":"star","finish":"alloy","laser":"1"},"create":false,"client_ship_id":"425271352936625943","client_tr":1}}');
         this.send('{"name":"enter","data":{"spectate":false}}');
         this.send('{"name":"respawn"}');
       }
@@ -38,7 +39,6 @@
       Ball.onerror = function(){
         showError("Failed to connect the bot (ID "+this.id+") to the server");
       }
-      Ball.id = request_id++;
       this.members.push(Ball);
       return Ball.id;
     },
@@ -57,7 +57,17 @@
       }
     },
     setName: function(name) {
-      this.name = name.toString().toUpperCase();
+      switch (name) {
+        case void 0:
+          name = "undefined";
+          break;
+        case null:
+          name = "null";
+          break;
+        default:
+          name = name.toString();
+      }
+      this.name = name.toUpperCase();
     },
     members: []
   };
