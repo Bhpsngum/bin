@@ -67,7 +67,9 @@
         default:
           name = name.toString();
       }
-      this.name = name.toUpperCase();
+      name = name.toUpperCase();
+      this.name = name;
+      return name;
     },
     members: []
   };
