@@ -27,18 +27,20 @@
       refresh();
       let Ball = new WebSocket("wss://"+this.address.ip+".starblast.io:"+this.address.port+"/");
       Ball.id = request_id++;
+      Ball.logs = !!this.logs;
       Ball.onopen = function(){
         this.send('{"name":"join","data":{"mode":"survival","spectate":false,"spectate_ship":1,"player_name":"'+(Bot.name.toUpperCase()||"DUMMY")+' '+this.id+'","hue":288,"preferred":'+Bot.address.id+',"bonus":false,"ecp_key":null,"steamid":null,"ecp_custom":{"badge":"star","finish":"alloy","laser":"1"},"create":false,"client_ship_id":"425271352936625943","client_tr":1}}');
         this.send('{"name":"enter","data":{"spectate":false}}');
         this.send('{"name":"respawn"}');
       }
       Ball.onclose = function() {
-        showLog("The bot (ID "+this.id+") has been removed from the game!");
+        this.logs && showLog("The bot (ID "+this.id+") has been removed from the game!");
         Bot.members[find(this.id)] = 0;
         refresh();
       }
       Ball.onerror = function(){
         showError("Failed to connect the bot (ID "+this.id+") to the server!");
+        this.logs = !1;
       }
       this.members.push(Ball);
       return Ball.id;
@@ -64,9 +66,12 @@
         default:
           name = name.toString();
       }
-      name = name.toUpperCase();
-      this.name = name;
-      return name;
+      this.name = name.toUpperCase();
+      return this.name;
+    },
+    showLogs: function(bool) {
+      this.logs = !!bool;
+      return this.logs;
     },
     members: []
   };
