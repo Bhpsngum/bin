@@ -33,27 +33,24 @@
         this.send('{"name":"respawn"}');
       }
       Ball.onclose = function() {
-        showLog("The bot (ID"+this.id") has been removed from the game");
+        showLog("The bot (ID "+this.id+") has been removed from the game!");
         Bot.members[find(this.id)] = 0;
         refresh();
       }
       Ball.onerror = function(){
-        showError("Failed to connect the bot (ID "+this.id+") to the server");
+        showError("Failed to connect the bot (ID "+this.id+") to the server!");
       }
       this.members.push(Ball);
       return Ball.id;
     },
     remove: function(...ids) {
       refresh();
-      let members = this.members.filter(i => (i && i?.id)).map(i => i.id);
+      let members = this.members.filter(i => (i && (i||{}).id != null)).map(i => i.id);
       ids = (ids.length != 0)?ids:members;
       for (let id of ids) {
         let error = "Failed to remove the bot (ID "+id+") from the game!";
         if (members.indexOf(Number(id)||0) == -1) showError(error);
-        else {
-          let fail = destroy(id);
-          if (fail.error) showError(error);
-        }
+        else destroy(id).fail && showError(error);
       }
     },
     setName: function(name) {
