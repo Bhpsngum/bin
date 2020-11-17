@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Starblast Modding Bot
 // @namespace    http://tampermonkey.net/
-// @version      1.3
+// @version      1.3.1
 // @description  Make some ships join your created game!
 // @author       Bhpsngum
 // @match        https://starblast.data.neuronality.com/modding/moddingcontent.html
@@ -33,6 +33,7 @@
         this.send('{"name":"respawn"}');
       }
       Ball.onclose = function() {
+        showLog("The bot (ID"+this.id") has been removed from the game");
         Bot.members[find(this.id)] = 0;
         refresh();
       }
@@ -52,7 +53,6 @@
         else {
           let fail = destroy(id);
           if (fail.error) showError(error);
-          else showLog("Successfully removed the bot (ID "+id+") from the game!");
         }
       }
     },
@@ -93,7 +93,7 @@
         }
       });
     }
-    catch(e){error=!!e;console.log(e)};
+    catch(e){error=!!e};
     refresh();
     return {error:error}
   }
