@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Starblast Modding Bot
 // @namespace    http://tampermonkey.net/
-// @version      1.4.1
+// @version      1.4.2
 // @description  Make some ships join your created game!
 // @author       Bhpsngum
 // @match        https://starblast.data.neuronality.com/modding/moddingcontent.html
@@ -27,9 +27,9 @@
             }).map(i => i.systems.map(j => Object.assign(j,function(){
               let t = i.address.split(":");
               return {
-                location:i.location,
-                ip:t[0].replace(/-/g,"."),
-                port:parseInt(t[1])
+                location: i.location,
+                ip: t[0].replace(/-/g,"."),
+                port: t[1]
               }
             }()))).flat().filter(i => (!obj.id || obj.id == i.id) && (!obj.name || obj.name == i.name) && (!obj.mode || obj.mode == i.mode) && (!obj.mod_id || obj.mod_id == i.mod_id)).map(i => {
               let c = {
@@ -51,7 +51,11 @@
         this.ip = (obj.ip == void 0)?"":obj.ip.replace(/\./g,"-");
         this.port = (obj.port == void 0)?"":obj.port;
         this.id = (obj.id == void 0)?"":obj.id;
-        return {ip:this.ip,port:this.port,id:this.id}
+        return {
+          ip: this.ip,
+          port: this.port,
+          id: this.id
+        }
       }
     },
     name: "",
@@ -60,15 +64,15 @@
       refresh();
       let Ball = new WebSocket("wss://"+this.address.ip+".starblast.io:"+this.address.port+"/");
       Ball.id = request_id++;
-      Ball.logs = !!this.logs;
       Ball.onopen = function(){
         this.send('{"name":"join","data":{"mode":"survival","spectate":false,"spectate_ship":1,"player_name":"'+(Bot.name.toUpperCase()||"DUMMY")+' '+this.id+'","hue":288,"preferred":'+Bot.address.id+',"bonus":false,"ecp_key":null,"steamid":null,"ecp_custom":{"badge":"star","finish":"alloy","laser":"1"},"create":false,"client_ship_id":"425271352936625943","client_tr":1}}');
         this.send('{"name":"enter","data":{"spectate":false}}');
         this.send('{"name":"respawn"}');
       }
       Ball.onclose = function() {
-        (this.logs && !this.error) && showLog("The bot (ID "+this.id+") has been removed from the game!");
-        Bot.members[find(this.id)] = 0;
+        (Bot.logs && !this.error) && showLog("The bot (ID "+this.id+") has been removed from the game!");
+        let index = find(this.id);
+        if (index != null) Bot.members[index] = 0;
         refresh();
       }
       Ball.onerror = function(){
@@ -80,7 +84,7 @@
     },
     remove: function(...ids) {
       refresh();
-      let members = this.members.filter(i => (i && (i||{}).id != null)).map(i => i.id);
+      let members = this.members.map(i => i.id);
       ids = (ids.length != 0)?ids:members;
       for (let id of ids) {
         let error = "Failed to remove the bot (ID "+id+") from the game!";
@@ -104,15 +108,14 @@
     },
     showLogs: function(bool) {
       this.logs = !!bool;
-      refresh();
-      this.members.forEach(i => {i.logs = this.logs});
       return this.logs;
     },
     members: []
   };
   var find = function(id) {
+    id = id || 0;
     for (let i=0;i<Bot.members.length;i++) {
-      if (Bot.members[i]?.id === id) return i;
+      if ((Bot.members[i]||{}).id === id) return i;
     }
     return null;
   }
