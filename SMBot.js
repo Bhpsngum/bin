@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Starblast Modding Bot
 // @namespace    http://tampermonkey.net/
-// @version      1.4.2
+// @version      1.4.3
 // @description  Make some ships join your created game!
 // @author       Bhpsngum
 // @match        https://starblast.data.neuronality.com/modding/moddingcontent.html
@@ -85,9 +85,9 @@
     remove: function(...ids) {
       refresh();
       let members = this.members.map(i => i.id);
-      ids = (ids.length != 0)?ids:members;
+      ids = [...new Set((ids.length != 0)?ids:members)];
       for (let id of ids) {
-        let error = "Failed to remove the bot (ID "+id+") from the game!";
+        let error = "The bot (ID "+id+") does not exist!";
         if (members.indexOf(Number(id)||0) == -1) showError(error);
         else destroy(id).fail && showError(error);
       }
@@ -127,8 +127,17 @@
     try {
       Bot.members.forEach((bot,index) => {
         if (bot.id === id && !destroyed) {
-          bot.close();
-          Bot.members[index] = 0;
+          switch (bot.readyState) {
+            case WebSocket.CONNECTING:
+              bot.onopen = function(){bot.close()};
+              break;
+            case WebSocket.OPEN:
+              bot.close();
+              break;
+            case WebSocket.CLOSING:
+            case WebSocket.CLOSED:
+              break;
+          }
           destroyed = !0;
         }
       });
