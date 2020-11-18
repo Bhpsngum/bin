@@ -17,6 +17,7 @@
       port: "",
       id: "",
       search: function (obj, func) {
+        obj = obj || {};
         var u = new XMLHttpRequest();
         u.open('GET',"/simstatus.json");
         u.onreadystatechange = function(){
