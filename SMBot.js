@@ -55,6 +55,7 @@
       }
     },
     name: "",
+    logs: !0,
     create: function() {
       refresh();
       let Ball = new WebSocket("wss://"+this.address.ip+".starblast.io:"+this.address.port+"/");
