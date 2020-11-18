@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Starblast Modding Bot
 // @namespace    http://tampermonkey.net/
-// @version      1.3.1
+// @version      1.4.0
 // @description  Make some ships join your created game!
 // @author       Bhpsngum
 // @match        https://starblast.data.neuronality.com/modding/moddingcontent.html
@@ -16,10 +16,41 @@
       ip: "",
       port: "",
       id: "",
+      search: function (obj, func) {
+        var u = new XMLHttpRequest();
+        u.open('GET',"/simstatus.json");
+        u.onreadystatechange = function(){
+          if (u.readyState == 4 && u.status == 200 && typeof func == "function") func.call(window, JSON.parse(u.responseText).filter(i => {
+              let t = i.address.split(":");
+              return (!obj.location || obj.location === i.location) && (!obj.ip || obj.ip==t[0].replace(/-/g,".")) && (!obj.port || obj.port==t[1])
+            }).map(i => i.systems.map(j => Object.assign(j,function(){
+              let t = i.address.split(":");
+              return {
+                location:i.location,
+                ip:t[0].replace(/-/g,"."),
+                port:parseInt(t[1])
+              }
+            }()))).flat().filter(i => (!obj.id || obj.id == i.id) && (!obj.name || obj.name == i.name) && (!obj.mode || obj.mode == i.mode) && (!obj.mod_id || obj.mod_id == i.mod_id)).map(i => {
+              let c = {
+                location: i.location,
+                ip: i.ip,
+                port: i.port,
+                id: i.id,
+                name: i.name,
+                mode: i.mode,
+                mod_id: i.mod_id
+              };
+              if (!c.mod_id) delete c.mod_id;
+              return c;
+            }));
+          }
+        u.send(null);
+      },
       config: function(obj) {
         this.ip = (obj.ip == void 0)?"":obj.ip.replace(/\./g,"-");
         this.port = (obj.port == void 0)?"":obj.port;
         this.id = (obj.id == void 0)?"":obj.id;
+        return {ip:this.ip,port:this.port,id:this.id}
       }
     },
     name: "",
