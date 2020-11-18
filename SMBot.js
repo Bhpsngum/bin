@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Starblast Modding Bot
 // @namespace    http://tampermonkey.net/
-// @version      1.4.0
+// @version      1.4.1
 // @description  Make some ships join your created game!
 // @author       Bhpsngum
 // @match        https://starblast.data.neuronality.com/modding/moddingcontent.html
@@ -19,7 +19,7 @@
       search: function (obj, func) {
         obj = obj || {};
         var u = new XMLHttpRequest();
-        u.open('GET',"https:/starblast.io/simstatus.json");
+        u.open('GET',"https://starblast.io/simstatus.json");
         u.onreadystatechange = function(){
           if (u.readyState == 4 && u.status == 200 && typeof func == "function") func.call(window, JSON.parse(u.responseText).filter(i => {
               let t = i.address.split(":");
