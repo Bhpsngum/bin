@@ -59,8 +59,8 @@
           }
         }
         this.ip = (obj.ip == void 0)?"":(obj.ip||this.ip).replace(/\./g,"-");
-        this.port = parseInt((obj.port == void 0)?"":(obj.port||this.port));
-        this.id = parseInt((obj.id == void 0)?"":(obj.id||this.id));
+        this.port = parseInt((obj.port == void 0)?"":obj.port)||this.port;
+        this.id = parseInt((obj.id == void 0)?"":obj.id)||this.id;
         return {
           ip: this.ip,
           port: this.port,
