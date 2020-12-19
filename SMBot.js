@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Starblast Modding Bot
 // @namespace    http://tampermonkey.net/
-// @version      1.4.3
+// @version      1.5.3
 // @description  Make some ships join your created game!
 // @author       Bhpsngum
 // @match        https://starblast.data.neuronality.com/modding/moddingcontent.html
@@ -29,7 +29,7 @@
               return {
                 location: i.location,
                 ip: t[0].replace(/-/g,"."),
-                port: t[1]
+                port: parseInt(t[1])
               }
             }()))).flat().filter(i => (!obj.id || obj.id == i.id) && (!obj.name || obj.name == i.name) && (!obj.mode || obj.mode == i.mode) && (!obj.mod_id || obj.mod_id == i.mod_id)).map(i => {
               let c = {
@@ -48,9 +48,19 @@
         u.send(null);
       },
       config: function(obj) {
-        this.ip = (obj.ip == void 0)?"":obj.ip.replace(/\./g,"-");
-        this.port = (obj.port == void 0)?"":obj.port;
-        this.id = (obj.id == void 0)?"":obj.id;
+        obj = obj || {};
+        if (typeof obj == "string") {
+          obj = obj.split("#")[1];
+          let t = obj.split("@");
+          obj = {
+            id: t[0],
+            ip: t[1].split(":")[0],
+            port: t[1].split(":")[1]
+          }
+        }
+        this.ip = (obj.ip == void 0)?"":(obj.ip||this.ip).replace(/\./g,"-");
+        this.port = parseInt((obj.port == void 0)?"":(obj.port||this.port));
+        this.id = parseInt((obj.id == void 0)?"":(obj.id||this.id));
         return {
           ip: this.ip,
           port: this.port,
