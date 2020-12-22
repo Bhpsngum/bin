@@ -6,6 +6,7 @@
 // @author       Bhpsngum
 // @match        https://starblast.data.neuronality.com/modding/moddingcontent.html
 // @grant        none
+// @antifeature  none
 // ==/UserScript==
 
 (function() {
