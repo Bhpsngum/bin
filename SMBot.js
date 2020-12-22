@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Starblast Modding Bot
 // @namespace    http://tampermonkey.net/
-// @version      1.5.3
+// @version      1.5.4
 // @description  Make some ships join your created game!
 // @author       Bhpsngum
 // @match        https://starblast.data.neuronality.com/modding/moddingcontent.html
@@ -16,36 +16,38 @@
       ip: "",
       port: "",
       id: "",
-      search: function (obj, func) {
-        obj = obj || {};
-        var u = new XMLHttpRequest();
-        u.open('GET',"https://starblast.io/simstatus.json");
-        u.onreadystatechange = function(){
-          if (u.readyState == 4 && u.status == 200 && typeof func == "function") func.call(window, JSON.parse(u.responseText).filter(i => {
-              let t = i.address.split(":");
-              return (!obj.location || obj.location === i.location) && (!obj.ip || obj.ip==t[0].replace(/-/g,".")) && (!obj.port || obj.port==t[1])
-            }).map(i => i.systems.map(j => Object.assign(j,function(){
-              let t = i.address.split(":");
-              return {
-                location: i.location,
-                ip: t[0].replace(/-/g,"."),
-                port: parseInt(t[1])
-              }
-            }()))).flat().filter(i => (!obj.id || obj.id == i.id) && (!obj.name || obj.name == i.name) && (!obj.mode || obj.mode == i.mode) && (!obj.mod_id || obj.mod_id == i.mod_id)).map(i => {
-              let c = {
-                location: i.location,
-                ip: i.ip,
-                port: i.port,
-                id: i.id,
-                name: i.name,
-                mode: i.mode,
-                mod_id: i.mod_id
-              };
-              if (!c.mod_id) delete c.mod_id;
-              return c;
-            }));
-          }
-        u.send(null);
+      search: function (keywords, handler) {
+        if (typeof handler == "function") {
+          let obj = keywords || {};
+          var u = new XMLHttpRequest();
+          u.open('GET',"https://starblast.io/simstatus.json");
+          u.onreadystatechange = function(){
+            if (u.readyState == 4 && u.status == 200) handler.call(window, JSON.parse(u.responseText).filter(i => {
+                let t = i.address.split(":");
+                return (!obj.location || obj.location === i.location) && (!obj.ip || obj.ip==t[0].replace(/-/g,".")) && (!obj.port || obj.port==t[1])
+              }).map(i => i.systems.map(j => Object.assign(j,function(){
+                let t = i.address.split(":");
+                return {
+                  location: i.location,
+                  ip: t[0].replace(/-/g,"."),
+                  port: parseInt(t[1])
+                }
+              }()))).flat().filter(i => (!obj.id || obj.id == i.id) && (!obj.name || obj.name == i.name) && (!obj.mode || obj.mode == i.mode) && (!obj.mod_id || obj.mod_id == i.mod_id)).map(i => {
+                let c = {
+                  location: i.location,
+                  ip: i.ip,
+                  port: i.port,
+                  id: i.id,
+                  name: i.name,
+                  mode: i.mode,
+                  mod_id: i.mod_id
+                };
+                if (!c.mod_id) delete c.mod_id;
+                return c;
+              }));
+            }
+          u.send(null);
+        }
       },
       config: function(obj) {
         obj = obj || {};
@@ -58,7 +60,7 @@
             port: t[1].split(":")[1]
           }
         }
-        this.ip = (obj.ip == void 0)?"":(obj.ip||this.ip).replace(/\./g,"-");
+        this.ip = ((obj.ip == void 0)?"":(obj.ip||this.ip)).toString();
         this.port = parseInt((obj.port == void 0)?"":obj.port)||this.port;
         this.id = parseInt((obj.id == void 0)?"":obj.id)||this.id;
         return {
@@ -70,27 +72,32 @@
     },
     name: "",
     logs: !0,
-    create: function() {
+    indexed: !0,
+    create: function(quantity) {
       refresh();
-      let Ball = new WebSocket("wss://"+this.address.ip+".starblast.io:"+this.address.port+"/");
-      Ball.id = request_id++;
-      Ball.onopen = function(){
-        this.send('{"name":"join","data":{"mode":"survival","spectate":false,"spectate_ship":1,"player_name":"'+(Bot.name.toUpperCase()||"DUMMY")+' '+this.id+'","hue":288,"preferred":'+Bot.address.id+',"bonus":false,"ecp_key":null,"steamid":null,"ecp_custom":{"badge":"star","finish":"alloy","laser":"1"},"create":false,"client_ship_id":"425271352936625943","client_tr":1}}');
-        this.send('{"name":"enter","data":{"spectate":false}}');
-        this.send('{"name":"respawn"}');
+      let mem = [];
+      for (let i = 0; i < (Math.trunc(Number(quantity))||1); i++) {
+        let Ball = new WebSocket("wss://"+this.address.ip.replace(/\./g,"-")+".starblast.io:"+this.address.port+"/");
+        Ball.id = request_id++;
+        Ball.onopen = function(){
+          this.send('{"name":"join","data":{"mode":"survival","spectate":false,"spectate_ship":1,"player_name":"'+(Bot.name.toUpperCase()||"DUMMY")+' '+(Bot.indexed?this.id:"")+'","hue":288,"preferred":'+Bot.address.id+',"bonus":false,"ecp_key":null,"steamid":null,"ecp_custom":{"badge":"star","finish":"alloy","laser":"1"},"create":false,"client_ship_id":"425271352936625943","client_tr":1}}');
+          this.send('{"name":"enter","data":{"spectate":false}}');
+          this.send('{"name":"respawn"}');
+        }
+        Ball.onclose = function() {
+          (Bot.logs && !this.error) && showLog("The bot (ID "+this.id+") has been removed from the game!");
+          let index = find(this.id);
+          if (index != null) Bot.members[index] = 0;
+          refresh();
+        }
+        Ball.onerror = function(){
+          showError("Failed to connect the bot (ID "+this.id+") to the server!");
+          this.error = !0;
+        }
+        this.members.push(Ball);
+        mem.push(Ball.id);
       }
-      Ball.onclose = function() {
-        (Bot.logs && !this.error) && showLog("The bot (ID "+this.id+") has been removed from the game!");
-        let index = find(this.id);
-        if (index != null) Bot.members[index] = 0;
-        refresh();
-      }
-      Ball.onerror = function(){
-        showError("Failed to connect the bot (ID "+this.id+") to the server!");
-        this.error = !0;
-      }
-      this.members.push(Ball);
-      return Ball.id;
+      return mem.length>1?mem:mem[0];
     },
     remove: function(...ids) {
       refresh();
@@ -115,6 +122,11 @@
       }
       this.name = name.toUpperCase();
       return this.name;
+    },
+    showIndex: function (bool) {
+      bool = !!bool;
+      this.indexed = bool;
+      return bool;
     },
     showLogs: function(bool) {
       this.logs = !!bool;
