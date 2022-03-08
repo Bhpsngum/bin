@@ -1056,7 +1056,7 @@ var check = function(game, isWaiting, isGameOver) {
     }
   }
   if (game.step % 120 == 0) {
-    for (let code of [20, 21, 11, 10]) {
+    for (let code of [10, 11, 20, 21]) {
       let {x, y} = randItem(game.custom.mapPoints);
       game.addCollectible({x, y, code})
     }
