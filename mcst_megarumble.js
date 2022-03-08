@@ -1043,7 +1043,6 @@ var check = function(game, isWaiting, isGameOver) {
       checkButtons(ship);
       teams.count[ship.custom.team]++;
       (ship.score != ship.custom.frags) && ship.set({score:ship.custom.frags});
-      ship.emptyWeapons();
     }
   }
   if(game.step % 5 === 0) {
@@ -1057,11 +1056,10 @@ var check = function(game, isWaiting, isGameOver) {
     }
   }
   if (game.step % 120 == 0) {
-      var mapsize = game.options.map_size * 10 || 1000;
-      for (let code of [20, 21, 11, 10]) {
-        let {x, y} = randItem(game.custom.mapPoints);
-        game.addCollectible({x, y, code})
-      }
+    for (let code of [20, 21, 11, 10]) {
+      let {x, y} = randItem(game.custom.mapPoints);
+      game.addCollectible({x, y, code})
+    }
   }
   if (game.step % 3600 == 0) {
     game.addCollectible({x:0,y:0,code:12});
@@ -1641,7 +1639,7 @@ for (var i=0;i<1;i++)
     scale:{x:1,y:4.5,z:4.5},
     rotation: {x:0,y:3.14*1.5,z:0}
   }) ;
- 
+
   }
 }
 
@@ -1672,7 +1670,7 @@ for (var i=0;i<1;i++)
     scale:{x:0.8,y:2,z:4},
     rotation: {x:3.8,y:3.14*1.5,z:0}
   }) ;
- 
+
   }
 }
 
@@ -1703,10 +1701,10 @@ for (var i=0;i<1;i++)
     scale:{x:0.8,y:2,z:4},
     rotation: {x:-3.8,y:3.14*1.5,z:0}
   }) ;
- 
+
   }
 }
- 
+
 var right_piece4 = {
   id: "right_piece4",
   obj: "https://starblast.data.neuronality.com/mods/objects/cube/cube.obj",
@@ -1734,10 +1732,10 @@ for (var i=0;i<1;i++)
     scale:{x:0.8,y:2,z:4},
     rotation: {x:3.14/2,y:3.14,z:3.8}
   }) ;
- 
+
   }
 }
- 
+
 var right_piece5 = {
   id: "right_piece5",
   obj: "https://starblast.data.neuronality.com/mods/objects/cube/cube.obj",
@@ -1765,10 +1763,10 @@ for (var i=0;i<1;i++)
     scale:{x:0.8,y:2,z:4},
     rotation: {x:3.14/2,y:3.14*2,z:3.8}
   }) ;
- 
+
   }
 }
- 
+
 var right_piece6 = {
   id: "right_piece6",
   obj: "https://starblast.data.neuronality.com/mods/objects/cube/cube.obj",
@@ -1795,10 +1793,10 @@ for (var i=0;i<1;i++)
     scale:{x:0.7,y:7.2,z:7.2},
     rotation: {x:0,y:3.14*1.5,z:0}
   }) ;
- 
+
   }
 }
- 
+
 var right_piece7 = {
   id: "right_piece7",
   obj: "https://starblast.data.neuronality.com/mods/objects/cube/cube.obj",
@@ -1826,10 +1824,10 @@ for (var i=0;i<1;i++)
     scale:{x:7.2,y:7.2,z:0.7},
     rotation: {x:0,y:0,z:0}
   }) ;
- 
+
   }
 }
- 
+
 var right_alien = {
   id: "right_alien",
   obj: "https://raw.githubusercontent.com/mrGoldmanus/starblastt/master/starblast-1566310653138.obj",
@@ -1852,7 +1850,7 @@ for (var i=0;i<1;i++)
     scale:{x:5,y:5,z:8},
     rotation: {x:0,y:0,z:3.14*1.5}
   }) ;
- 
+
   }
 }
 
@@ -1885,7 +1883,7 @@ for (var i=0;i<1;i++)
     scale:{x:1,y:4.5,z:4.5},
     rotation: {x:0,y:3.14*1.5,z:0}
   }) ;
- 
+
   }
 }
 
@@ -1916,7 +1914,7 @@ for (var i=0;i<1;i++)
     scale:{x:0.8,y:2,z:4},
     rotation: {x:3.8,y:3.14*1.5,z:0}
   }) ;
- 
+
   }
 }
 
@@ -1947,10 +1945,10 @@ for (var i=0;i<1;i++)
     scale:{x:0.8,y:2,z:4},
     rotation: {x:-3.8,y:3.14*1.5,z:0}
   }) ;
- 
+
   }
 }
- 
+
 var left_piece4 = {
   id: "left_piece4",
   obj: "https://starblast.data.neuronality.com/mods/objects/cube/cube.obj",
@@ -1978,10 +1976,10 @@ for (var i=0;i<1;i++)
     scale:{x:0.8,y:2,z:4},
     rotation: {x:3.14/2,y:3.14,z:3.8}
   }) ;
- 
+
   }
 }
- 
+
 var left_piece5 = {
   id: "left_piece5",
   obj: "https://starblast.data.neuronality.com/mods/objects/cube/cube.obj",
@@ -2009,10 +2007,10 @@ for (var i=0;i<1;i++)
     scale:{x:0.8,y:2,z:4},
     rotation: {x:3.14/2,y:3.14*2,z:3.8}
   }) ;
- 
+
   }
 }
- 
+
 var left_piece6 = {
   id: "left_piece6",
   obj: "https://starblast.data.neuronality.com/mods/objects/cube/cube.obj",
@@ -2039,10 +2037,10 @@ for (var i=0;i<1;i++)
     scale:{x:0.7,y:7.2,z:7.2},
     rotation: {x:0,y:3.14*1.5,z:0}
   }) ;
- 
+
   }
 }
- 
+
 var left_piece7 = {
   id: "left_piece7",
   obj: "https://starblast.data.neuronality.com/mods/objects/cube/cube.obj",
@@ -2070,10 +2068,10 @@ for (var i=0;i<1;i++)
     scale:{x:7.2,y:7.2,z:0.7},
     rotation: {x:0,y:0,z:0}
   }) ;
- 
+
   }
 }
- 
+
 var left_alien = {
   id: "left_alien",
   obj: "https://raw.githubusercontent.com/mrGoldmanus/starblastt/master/starblast-1566310653138.obj",
@@ -2096,7 +2094,7 @@ for (var i=0;i<1;i++)
     scale:{x:5,y:5,z:8},
     rotation: {x:0,y:0,z:3.14*1.5}
   }) ;
- 
+
   }
 }
 
