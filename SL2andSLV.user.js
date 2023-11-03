@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SL+ v2 and SL V Combined
 // @namespace    http://tampermonkey.net/
-// @version      0.1
+// @version      0.2
 // @description  Combining both SL+ v2 and SL V API to spectate both team and survival games
 // @author       Bhpsngum
 // @match        https://starblast.dankdmitron.dev/
@@ -77,7 +77,7 @@
 
 			for (let id in response.players) {
 				let player = response.players[id];
-				player.ship = player.type;
+				player.ship = player.type == null ? 101 : player.type;
 				player.profile = player;
 				player.alive = true;
                 positionData.positions[id] = {...player};
