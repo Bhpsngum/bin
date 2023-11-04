@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         SL+ v2 and SL V Combined
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  Combining both SL+ v2 and SL V API to spectate both team and survival games
 // @author       Bhpsngum
 // @match        https://starblast.dankdmitron.dev/
@@ -17,8 +17,12 @@
     script.innerHTML = "window.Spectator = Spectator;window.SystemReportManager = SystemReportManager";
     document.body.appendChild(script);
 
-	const convert = function (obj, prop, replacer) {
-		return window[obj].prototype[prop] = Function("return (" + replacer(window[obj].prototype[prop].toString().replace(/^(async)*/, "$& function ")) + ")")();
+	const convert = function (obj, prop, replacer, noProto) {
+		let func = window[obj];
+		if (!noProto) func = func.prototype;
+		let str = func[prop].toString();
+		if (!noProto) str = str.replace(/^(async)*/, "$& function ");
+		return func[prop] = Function("return (" + replacer(str) + ")")();
 	}
 
 	convert("SystemReportManager", "showInfo", function (old) {
@@ -40,8 +44,24 @@
 	});
 
 	convert("Spectator", "renderMap", function (old) {
-		return old.replace(`for (let team of self.modeInfo.mode.teams)`, `if (!self.useAlternativeAPI) $&`);
+		return old.replace(`for (let team of self.modeInfo.mode.teams)`, `if (!self.useAlternativeAPI) $&`).replace(`self.spectateOutlineColor`, `$&, profile.player_name`);
 	});
+
+	convert("window", "drawCross", function (old) {
+		return old.replace(`outlineColor`, `$&, name`).replace(`return pos`, `
+		let element = document.querySelector(".player-view-box");
+		if (element != null) {
+			let textStyle = window.getComputedStyle(element);
+			let textSize = +(textStyle.fontSize.match(/\\d+/) || [])[0] || 0;
+			ctx.textAlign = "center";
+			ctx.font = textStyle.font;
+			let textY = pos.y + pos.radius + textSize;
+			if (textY > canvas.height) textY = pos.y - pos.radius - textSize;
+			ctx.fillText(name, pos.x, textY);
+			let textWidth = ctx.measureText(name).width;
+			if (isTarget) ctx.fillRect(pos.x - textWidth / 2, textY + 3, textWidth, 2);
+		};$&`)
+	}, true);
 
 	window.Spectator.prototype.continueAPILoop = function (systemId) {
 		const self = this;
