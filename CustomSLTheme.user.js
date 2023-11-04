@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Custom SL+ v2 Theme
 // @namespace    http://tampermonkey.net/
-// @version      0.4
+// @version      0.5
 // @description  Add your custom theme for SL+ v2
 // @author       Bhpsngum
 // @match        https://starblast.dankdmitron.dev/
@@ -15,19 +15,19 @@
     'use strict';
     const OptionHTML = `
                     <label style="width: -moz-available;width: -webkit-fill-available;width: fill-available;" class="form-check-label" for="useCustomTheme"><b>Custom Theme </b></label>
-                    <select class="form-select-sm float-end" name="useCustomTheme" id="useCustomTheme"></select>
+                    <select class="form-select-sm" style="max-width:30%" name="useCustomTheme" id="useCustomTheme"></select>
                     <button class="btn btn-danger" style="padding-top:0;padding-bottom:0;margin-left:1%;" id="customThemeEditButton">Edit</button>
                     <button class="btn btn-danger" style="padding-top:0;padding-bottom:0;margin-left:1%;" id="deleteCustomTheme">Delete</button>`;
 
     const optionElement = document.createElement("div");
-    optionElement.setAttribute("style", "display: flex;align-items:center;");
+    optionElement.setAttribute("style", "display: flex;align-items:center;overflow:scroll");
     optionElement.innerHTML = OptionHTML;
 
     let optionModal = document.querySelector("#settingsModal .modal-body");
 
     // wrap the old theme selector into a div
     let div = document.createElement("div");
-    div.setAttribute("style", "overflow: hidden; margin-bottom: 1%;");
+    div.setAttribute("style", "overflow: scroll; margin-bottom: 1%;");
     div.appendChild(optionModal.querySelector(`label[for="preferenceTheme"]`));
     div.appendChild(optionModal.querySelector("#preferenceTheme"));
 
