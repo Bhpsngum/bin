@@ -7,7 +7,7 @@
 // @match        https://starblast.dankdmitron.dev/
 // @icon         https://starblast.dankdmitron.dev/img/dankdmitron.png
 // @downloadURL  https://github.com/Bhpsngum/bin/raw/master/CustomSLTheme.user.js
-// @updateURL  https://github.com/Bhpsngum/bin/raw/master/CustomSLTheme.user.js
+// @updateURL    https://github.com/Bhpsngum/bin/raw/master/CustomSLTheme.user.js
 // @grant        none
 // ==/UserScript==
 
