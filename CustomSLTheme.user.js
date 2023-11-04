@@ -1,12 +1,13 @@
 // ==UserScript==
 // @name         Custom SL+ v2 Theme
 // @namespace    http://tampermonkey.net/
-// @version      0.2
+// @version      0.3
 // @description  Add your custom theme for SL+ v2
 // @author       Bhpsngum
 // @match        https://starblast.dankdmitron.dev/
 // @icon         https://starblast.dankdmitron.dev/img/dankdmitron.png
 // @downloadURL  https://github.com/Bhpsngum/bin/raw/master/CustomSLTheme.user.js
+// @updateURL  https://github.com/Bhpsngum/bin/raw/master/CustomSLTheme.user.js
 // @grant        none
 // ==/UserScript==
 
