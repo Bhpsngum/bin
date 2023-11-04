@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Custom SL+ v2 Theme
 // @namespace    http://tampermonkey.net/
-// @version      0.3
+// @version      0.4
 // @description  Add your custom theme for SL+ v2
 // @author       Bhpsngum
 // @match        https://starblast.dankdmitron.dev/
@@ -14,18 +14,26 @@
 (function() {
     'use strict';
     const OptionHTML = `
-                    <label class="form-check-label" for="useCustomTheme"><b>Custom Theme </b></label><b style="cursor:pointer;text-decoration:underline;margin-left: 1%;color: var(--bs-link-color);user-select: none;" id="customThemeEditButton">(Click to edit current selection)</b>
-                    <select class="form-select-sm float-end" name="useCustomTheme" id="useCustomTheme"></select>`;
+                    <label style="width: -moz-available;width: -webkit-fill-available;width: fill-available;" class="form-check-label" for="useCustomTheme"><b>Custom Theme </b></label>
+                    <select class="form-select-sm float-end" name="useCustomTheme" id="useCustomTheme"></select>
+                    <button class="btn btn-danger" style="padding-top:0;padding-bottom:0;margin-left:1%;" id="customThemeEditButton">Edit</button>
+                    <button class="btn btn-danger" style="padding-top:0;padding-bottom:0;margin-left:1%;" id="deleteCustomTheme">Delete</button>`;
 
     const optionElement = document.createElement("div");
-    optionElement.setAttribute("class", "form-check ps-0");
-    optionElement.setAttribute("style", "margin-bottom: 2%");
+    optionElement.setAttribute("style", "display: flex;align-items:center;");
     optionElement.innerHTML = OptionHTML;
 
     let optionModal = document.querySelector("#settingsModal .modal-body");
-    let x = document.querySelector("#settingsModal .modal-dialog");
-    x.setAttribute("class", x.getAttribute("class") + " modal-lg");
-    optionModal.insertBefore(optionElement, optionModal.querySelector("label:not(.form-check-label)"));
+
+    // wrap the old theme selector into a div
+    let div = document.createElement("div");
+    div.setAttribute("style", "overflow: hidden; margin-bottom: 1%;");
+    div.appendChild(optionModal.querySelector(`label[for="preferenceTheme"]`));
+    div.appendChild(optionModal.querySelector("#preferenceTheme"));
+
+    optionModal.appendChild(div);
+    
+    optionModal.appendChild(optionElement);
 
     let useCustomThemeIndicator = document.querySelector("#useCustomTheme");
     useCustomThemeIndicator.addEventListener("change", function () {
@@ -42,12 +50,6 @@
             ">Changes are automatically saved and taken effect</p>Name:<input type="text" id="customThemeName" class="form-control" autocomplete="off" autocapitalize="off" placeholder="Your theme name">
             Code:
             <textarea rows="20" style="width: 100%; font-family: monospace; font-size: 10pt;" id="customThemeText"></textarea>
-            <button class="btn btn-danger" id="deleteCustomTheme" style="
-                position: relative;
-                left: 50%;
-                -ms-transform: translateX(-50%);
-                transform: translateX(-50%);
-            ">Delete theme</button>
             </div>
         </div>
     </div>
@@ -60,6 +62,7 @@
     const textEditor = document.querySelector("#customThemeText");
     const themeName = document.querySelector("#customThemeName");
     const allowEdit = document.querySelector("#customThemeEditButton");
+    const deleteTheme = document.querySelector("#deleteCustomTheme");
 
     const CustomThemeEditorModal = new window.bootstrap.Modal(document.querySelector("#customThemeEditor"), {
         keyboard: true,
@@ -89,7 +92,7 @@
     }, saveTheme = function () {
         let theme = getCustomThemeSet();
         if (theme != null) {
-            theme.name = themeName.value || "Unamed custom theme";
+            theme.name = themeName.value || "Unamed theme";
             theme.code = textEditor.value || "";
             saveToStorage();
             updateThemeSelector();
@@ -97,11 +100,14 @@
         }
     }
 
-    document.querySelector("#deleteCustomTheme").addEventListener("click", function () {
+    deleteTheme.addEventListener("click", function () {
         let theme = getCustomThemeSet();
         if (theme != null && confirm("Are you sure to delete this custom theme?")) {
             customThemeList.splice(useCustom - 1, 1);
-            if (useCustom > customThemeList.length) useCustom = customThemeList.length;
+            if (useCustom > customThemeList.length) {
+                useCustom = customThemeList.length;
+                localStorage.setItem("useCustomCSS", useCustom);
+            }
             saveToStorage();
             updateThemeSelector();
             loadCustom();
@@ -144,7 +150,7 @@
     saveToStorage();
 
     let updateThemeSelector = function () {
-        let nameList = ["None", ...customThemeList.map(e => e.name || "Unamed custom theme"), "+ Add a new theme"];
+        let nameList = ["None", ...customThemeList.map(e => e.name || "Unamed theme"), "Add theme..."];
         useCustomThemeIndicator.innerHTML = "";
         nameList.forEach((name, index) => {
             let opt = document.createElement("option");
@@ -160,13 +166,16 @@
         if (state != 0) {
             useCustom = state;
             if (getCustomThemeSet() == null) {
-                // create a new theme profile
-                customThemeList.push({
-                    name: "Unamed custom theme",
-                    code: ""
-                });
-                state = customThemeList.length;
-                saveToStorage();
+                if (init) state = 0;
+                else {
+                    // create a new theme profile
+                    customThemeList.push({
+                        name: "Unamed theme",
+                        code: ""
+                    });
+                    state = customThemeList.length;
+                    saveToStorage();
+                }
             }   
         }
         localStorage.setItem("useCustomCSS", state);
@@ -182,6 +191,8 @@
         else customCSSElement.remove();
         updateThemeSelector();
         allowEdit[(useCustom ? "remove" : "set") + "Attribute"]("hidden", "");
+        deleteTheme[(useCustom ? "remove" : "set") + "Attribute"]("hidden", "");
+        div[(useCustom ? "set" : "remove") + "Attribute"]("hidden", "");
     }, customCSSElement = document.createElement("style");
 
     saveState(useCustom, true);
