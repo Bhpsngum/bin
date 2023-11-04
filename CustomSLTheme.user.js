@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Custom SL+ v2 Theme
 // @namespace    http://tampermonkey.net/
-// @version      0.5
+// @version      0.6
 // @description  Add your custom theme for SL+ v2
 // @author       Bhpsngum
 // @match        https://starblast.dankdmitron.dev/
@@ -14,22 +14,30 @@
 (function() {
     'use strict';
     const OptionHTML = `
-                    <label style="width: -moz-available;width: -webkit-fill-available;width: fill-available;" class="form-check-label" for="useCustomTheme"><b>Custom Theme </b></label>
+                    <label style="width: -moz-available;width: -webkit-fill-available;width: fill-available;" for="useCustomTheme"><b>Custom Theme </b></label>
                     <select class="form-select-sm" style="max-width:30%" name="useCustomTheme" id="useCustomTheme"></select>
                     <button class="btn btn-danger" style="padding-top:0;padding-bottom:0;margin-left:1%;" id="customThemeEditButton">Edit</button>
                     <button class="btn btn-danger" style="padding-top:0;padding-bottom:0;margin-left:1%;" id="deleteCustomTheme">Delete</button>`;
 
     const optionElement = document.createElement("div");
-    optionElement.setAttribute("style", "display: flex;align-items:center;overflow:scroll");
     optionElement.innerHTML = OptionHTML;
 
     let optionModal = document.querySelector("#settingsModal .modal-body");
 
     // wrap the old theme selector into a div
     let div = document.createElement("div");
-    div.setAttribute("style", "overflow: scroll; margin-bottom: 1%;");
-    div.appendChild(optionModal.querySelector(`label[for="preferenceTheme"]`));
-    div.appendChild(optionModal.querySelector("#preferenceTheme"));
+    div.setAttribute("style", "display: flex; overflow: hidden; margin-bottom: 1%;");
+    let themeTitle = optionModal.querySelector(`label[for="preferenceTheme"]`);
+    let themeSelect = optionModal.querySelector("#preferenceTheme");
+
+    themeTitle.removeAttribute("class");
+    themeTitle.setAttribute("style", "width: -moz-available;width: -webkit-fill-available;width: fill-available;");
+
+    themeSelect.setAttribute("style", "max-width: 40%");
+    themeSelect.setAttribute("class", "form-select-sm");
+
+    div.appendChild(themeTitle);
+    div.appendChild(themeSelect);
 
     optionModal.appendChild(div);
     
@@ -193,6 +201,7 @@
         allowEdit[(useCustom ? "remove" : "set") + "Attribute"]("hidden", "");
         deleteTheme[(useCustom ? "remove" : "set") + "Attribute"]("hidden", "");
         div[(useCustom ? "set" : "remove") + "Attribute"]("hidden", "");
+        optionElement.setAttribute("style", "display: flex;align-items:center;overflow:" + (useCustom ? "scroll" : "hidden"));
     }, customCSSElement = document.createElement("style");
 
     saveState(useCustom, true);
