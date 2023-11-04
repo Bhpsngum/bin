@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Custom SL+ v2 Theme
 // @namespace    http://tampermonkey.net/
-// @version      0.6
+// @version      0.7
 // @description  Add your custom theme for SL+ v2
 // @author       Bhpsngum
 // @match        https://starblast.dankdmitron.dev/
@@ -26,7 +26,7 @@
 
     // wrap the old theme selector into a div
     let div = document.createElement("div");
-    div.setAttribute("style", "display: flex; overflow: hidden; margin-bottom: 1%;");
+    div.setAttribute("style", "display: flex; align-items: center;overflow: hidden; margin-bottom: 1%;");
     let themeTitle = optionModal.querySelector(`label[for="preferenceTheme"]`);
     let themeSelect = optionModal.querySelector("#preferenceTheme");
 
