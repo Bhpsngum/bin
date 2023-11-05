@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Custom SL+ v2 Theme
 // @namespace    http://tampermonkey.net/
-// @version      0.7
+// @version      0.8
 // @description  Add your custom theme for SL+ v2
 // @author       Bhpsngum
 // @match        https://starblast.dankdmitron.dev/
@@ -20,13 +20,14 @@
                     <button class="btn btn-danger" style="padding-top:0;padding-bottom:0;margin-left:1%;" id="deleteCustomTheme">Delete</button>`;
 
     const optionElement = document.createElement("div");
+    optionElement.setAttribute("style", "display: flex;align-items:center;overflow:auto hidden");
     optionElement.innerHTML = OptionHTML;
 
     let optionModal = document.querySelector("#settingsModal .modal-body");
 
     // wrap the old theme selector into a div
     let div = document.createElement("div");
-    div.setAttribute("style", "display: flex; align-items: center;overflow: hidden; margin-bottom: 1%;");
+    div.setAttribute("style", "display: flex; align-items: center;overflow: hidden hidden; margin-bottom: 1%;");
     let themeTitle = optionModal.querySelector(`label[for="preferenceTheme"]`);
     let themeSelect = optionModal.querySelector("#preferenceTheme");
 
@@ -201,7 +202,6 @@
         allowEdit[(useCustom ? "remove" : "set") + "Attribute"]("hidden", "");
         deleteTheme[(useCustom ? "remove" : "set") + "Attribute"]("hidden", "");
         div[(useCustom ? "set" : "remove") + "Attribute"]("hidden", "");
-        optionElement.setAttribute("style", "display: flex;align-items:center;overflow:" + (useCustom ? "scroll" : "hidden"));
     }, customCSSElement = document.createElement("style");
 
     saveState(useCustom, true);
