@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Client Delay Info
 // @namespace    http://tampermonkey.net/
-// @version      1.2
+// @version      1.3
 // @description  Show delay for some info
 // @author       Bhpsngum
 // @include      /^https\:\/\/starblast\.io\/(app.html(\?.+)*)*$/
@@ -64,7 +64,7 @@
 		background-color: #fff;
 	}
 
-	#delay-info > table > tbody > tr:not(:first-child) {
+	#delay-info > table > tbody > tr:not(:first-child, :last-child) {
 		display: var(--delay-info-display);
 	}
 
