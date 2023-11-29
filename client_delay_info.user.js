@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Client Delay Info
 // @namespace    http://tampermonkey.net/
-// @version      1.1
+// @version      1.2
 // @description  Show delay for some info
 // @author       Bhpsngum
 // @include      /^https\:\/\/starblast\.io\/(app.html(\?.+)*)*$/
@@ -17,24 +17,24 @@
 		<tbody>
 			<tr title="Client rendering FPS">
 				<td class="bold">FPS</td>
-				<td> &nbsp; </td>
+				<td> : </td>
 				<td class="bold right" id="info-fps">N/A</td>
 			</tr>
 			<tr title="Client rendering delay. This is relative to your client FPS">
 				<td class="bold">Rendering</td>
-				<td> &nbsp; </td>
+				<td> : </td>
 				<td class="bold right" id="info-rendering">N/A</td>
 				<td> ms</td>
 			</tr>
 			<tr title="Client control input (RCS, shooting, strafing, staring/ending movements) delay">
 				<td class="bold">Control</td>
-				<td> &nbsp; </td>
+				<td> : </td>
 				<td class="bold right" id="info-control">N/A</td>
 				<td> ms</td>
 			</tr>
 			<tr title="Client rotation input delay">
 				<td class="bold">Rotation</td>
-				<td> &nbsp; </td>
+				<td> : </td>
 				<td class="bold right" id="info-rotation">N/A</td>
 				<td> ms </td>
 				<td> &plusmn; </td>
@@ -43,7 +43,7 @@
 			</tr>
 			<tr title="Network ping">
 				<td class="bold" id="info-region">Ping</td>
-				<td> &nbsp; </td>
+				<td> : </td>
 				<td class="bold right" id="info-ping">N/A</td>
 				<td> ms</td>
 			</tr>
@@ -62,7 +62,10 @@
 		right: 1%;
 		z-index: 10000;
 		background-color: #fff;
-		opacity: 0;
+	}
+
+	#delay-info > table > tbody > tr:not(:first-child) {
+		display: var(--delay-info-display);
 	}
 
 	#delay-info > table tr {
@@ -81,9 +84,10 @@
 
 	const main = Object.values(window.module.exports.settings).find(v => v && v.mode), data = {
 		update: function (field) {
-			let text = this[field]
-			if (field != "region") text = isNaN(text) ? "N/A" : Math.round(text);
-			container.querySelector("#info-" + field).innerText = text;
+			let text = this[field] == null ? "N/A" : this[field];
+			if (field != "region") text = (text == null || isNaN(text)) ? "N/A" : Math.round(text);
+			let con = container.querySelector("#info-" + field);
+			if (con.innerText != text) con.innerText = text;
 		}
 	};
 
@@ -91,7 +95,6 @@
 		Object.defineProperty(data, i, {
 			get () { return this[`__${i}__`] },
 			set (val) {
-				if (i != "region") val = Math.round(val);
 				let old = this[`__${i}__`];
 				this[`__${i}__`] = val;
 				if (val != old) this.update(i);
@@ -103,10 +106,8 @@
 	
 	setInterval(function () {
 		let ping = (Object.values(main).find(v => v && v.socket) || {}).ping_value;
-		if (ping != null) {
-			data.ping = ping;
-			if (data.region != null) data.region = `Ping (${main.region})`;
-		}
+		if (ping != null) data.ping = ping;
+		if (main.region != null) data.region = `Ping (${main.region})`;
 	}, 1);
 
 	let fpsTime = null;
@@ -182,24 +183,35 @@
         }
     }
 
-	let holding = false, hover = false;
+	let holding = false, hover = false, toggleInfo = function(show) {
+		document.documentElement.style.setProperty("--delay-info-display", show ? "table-row" : "none");
+	};
+
+	let lastHidden = localStorage.getItem("delay_counter_hidden") == "true";
+	let setContainer = function (status) {
+		lastHidden = !!status;
+		localStorage.setItem("delay_counter_hidden", lastHidden);
+		container.style.display = lastHidden ? "none" : "";
+	}
 
 	document.addEventListener("keydown", function (e) {
 		if (e.key == "Shift") {
 			holding = !holding;
-			if (holding) container.style.opacity = "1";
-			else if (!hover) container.style.opacity = "0";
+			if (holding) toggleInfo(true);
+			else if (!hover) toggleInfo(false);
 		}
+
+		if (e.keyCode == 191 /* / */) setContainer(!lastHidden);
 	});
 
 	container.addEventListener("mouseover", function (e) {
 		hover = true;
-		container.style.opacity = "1";
+		toggleInfo(true);
 	});
 
 	container.addEventListener("mouseout", function (e) {
 		hover = false;
-		if (!holding) container.style.opacity = "0";
+		if (!holding) toggleInfo(false);
 	});
 
 	for (let i of ["mousemove", "touchmove"]) document.addEventListener(i, function () {
@@ -207,4 +219,7 @@
 		if (lastInfo.rotation_global != now && lastInfo.rotation_global != null) data.rotation_global = now - lastInfo.rotation_global; 
 		lastInfo.rotation_global = now;
 	});
+
+	toggleInfo(false);
+	setContainer(lastHidden);
 })();
