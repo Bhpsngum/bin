@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Client Delay Info
 // @namespace    http://tampermonkey.net/
-// @version      1.3
+// @version      1.4
 // @description  Show delay for some info
 // @author       Bhpsngum
 // @include      /^https\:\/\/starblast\.io\/(app.html(\?.+)*)*$/
@@ -26,20 +26,44 @@
 				<td class="bold right" id="info-rendering">N/A</td>
 				<td> ms</td>
 			</tr>
-			<tr title="Client control input (RCS, shooting, strafing, staring/ending movements) delay">
-				<td class="bold">Control</td>
+			<tr title="Mouse input delay">
+				<td class="bold">Mouse</td>
+				<td> : </td>
+				<td class="bold right" id="info-mouse">N/A</td>
+				<td> ms</td>
+			</tr>
+			<tr title="Touch input delay">
+				<td class="bold">Touch</td>
+				<td> : </td>
+				<td class="bold right" id="info-touch">N/A</td>
+				<td> ms</td>
+			</tr>
+			<tr title="Keyboard input delay">
+				<td class="bold">Keyboard</td>
+				<td> : </td>
+				<td class="bold right" id="info-keyboard">N/A</td>
+				<td> ms</td>
+			</tr>
+			<tr title="Client control event delay from when browser registered the input to when it actually sent\nControl Events are:\n- RCS toggle\n- Start/Stop shooting\n- Start/Stop movement\n- Start/Stop strafing\nA complete delay from when you press mouse/keyboard button to when it actually sents can be computed as:\n(Mouse/Touch/Keyboard depending on which you started the action) delay + Control Event delay">
+				<td class="bold">Control Event</td>
 				<td> : </td>
 				<td class="bold right" id="info-control">N/A</td>
 				<td> ms</td>
 			</tr>
-			<tr title="Client rotation input delay">
+			<tr title="Client rotation input delay. This is calculated as:\ndelay = client mousemove input delay + delay until sent to server">
 				<td class="bold">Rotation</td>
 				<td> : </td>
-				<td class="bold right" id="info-rotation">N/A</td>
+				<td class="bold right" id="info-rotation_client">N/A</td>
 				<td> ms </td>
-				<td> &plusmn; </td>
-				<td class="bold right" id="info-rotation_global">N/A</td>
+				<td> + </td>
+				<td class="bold right" id="info-rotation">N/A</td>
 				<td> ms</td>
+			</tr>
+			<tr title="Delay between each registered movement.\nThis value may have the lower bound depending on your browser's refresh rate.">
+				<td class="bold">Mouse/Touch Movement</td>
+				<td> : </td>
+				<td class="bold right" id="info-rotation_global">N/A</td>
+				<td> ms </td>
 			</tr>
 			<tr title="Network ping">
 				<td class="bold" id="info-region">Ping</td>
@@ -91,7 +115,7 @@
 		}
 	};
 
-	for (let i of ["fps", "control", "rendering", "rotation", "ping", "region", "rotation_global"]) {
+	for (let i of ["fps", "control", "rendering", "rotation", "ping", "region", "rotation_global", "keyboard", "mouse", "touch", "rotation_client"]) {
 		Object.defineProperty(data, i, {
 			get () { return this[`__${i}__`] },
 			set (val) {
@@ -194,6 +218,17 @@
 		container.style.display = lastHidden ? "none" : "";
 	}
 
+	let measureTime = function (timestamp) {
+		let dateNow = Date.now();
+		if (!('performance' in window)) return dateNow - timestamp;
+
+		let perfNow = performance.now();
+
+		if (timestamp >= perfNow) return dateNow - timestamp;
+		
+		return perfNow - timestamp;
+	}
+
 	document.addEventListener("keydown", function (e) {
 		if (e.key == "Shift") {
 			holding = !holding;
@@ -202,6 +237,12 @@
 		}
 
 		if (e.keyCode == 191 /* / */) setContainer(!lastHidden);
+
+		if (e.timeStamp) data.keyboard = measureTime(e.timeStamp);
+	});
+
+	for (let i of ["mousedown", "mouseup", "touchstart", "touchend"]) document.addEventListener(i, function (e) {
+		if (e.timeStamp) data[i.slice(0, 5)] = measureTime(e.timeStamp);
 	});
 
 	container.addEventListener("mouseover", function (e) {
@@ -214,10 +255,12 @@
 		if (!holding) toggleInfo(false);
 	});
 
-	for (let i of ["mousemove", "touchmove"]) document.addEventListener(i, function () {
+	for (let i of ["mousemove", "touchmove"]) document.addEventListener(i, function (e) {
 		let now = performance.now();
 		if (lastInfo.rotation_global != now && lastInfo.rotation_global != null) data.rotation_global = now - lastInfo.rotation_global; 
 		lastInfo.rotation_global = now;
+
+		if (e.timeStamp) data.rotation_client = measureTime(e.timeStamp);
 	});
 
 	toggleInfo(false);
