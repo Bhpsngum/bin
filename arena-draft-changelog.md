@@ -1,4 +1,5 @@
 This file covers what has changed after the 4.1 version only
+
 Any changes before the 4.1 version are not recorded.
 
 # 4.1.0
@@ -130,8 +131,8 @@ In general, every ship models are changed and adjusted
 - Kills required 4 --> 3
 #### Shadow X-2
 - Ability Rework to 2-stage ability:
-+ Starts with Shadow X-3 for 20s
-+ Turns to Shadow X-1 for 20s
+	+ Starts with Shadow X-3 for 20s
+	+ Turns to Shadow X-1 for 20s
 #### Chimera
 - Ability CD 30s --> 33s
 - Ability duration 4s --> 5.6s
