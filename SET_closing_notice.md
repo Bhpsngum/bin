@@ -12,4 +12,5 @@ I know that SET is always a non-hacking client, but due to my official position 
 staying still anymore. So it's time for me to give up and go on.
 
 But will it be the end of SET?
+
 I don't know either.
