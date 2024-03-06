@@ -197,6 +197,8 @@ Any changes before the 4.1 version are not recorded.
 ### Gameplay
 - Score boosting mechanism adjusted to prevent massive point increase late-game
 - Ship limit for MS and Main modes 3 --> 2
+### Resources
+- Reworked some textures and OBJs thanks to Caramel and Notus.
 ### Code and hosting
 #### General
 - All template names can now be referred using their aliases in related commands or methods, e.g O-Defender --> odef, Advanced-Fighter --> advf
