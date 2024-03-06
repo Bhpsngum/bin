@@ -216,7 +216,7 @@ Any changes before the 4.1 version are not recorded.
 	- `ship.custom.nerf_teleporters`: Marks that any ship trying to teleport this ship should be nerfed 
 	- `ship.custom.buff_teleporters`: Marks that any ship trying to teleport this ship should be buffed
 - Ability template properties change:
-	- Added `antiTeleportation`, `antiTeleportationInAbility`, `nerfTeleporters`, `nerfTeleportersInAbility`, `buffTeleporters`, and `buffTeleportersInAbility`.
+	- Added `antiTeleportation`, `antiTeleportationInAbility`, `nerfTeleporters`, `nerfTeleportersInAbility`, `buffTeleporters`, `buffTeleportersInAbility`, and `aliases`.
 	- Removed `actionBlocker`, `abilityBlocker` and `shipChangeBlocker`.
 - Blocker rework, now you can manage blockers via `AbilityManager.blockers`:
 	- To add blocker to ship use `AbilityManager.blockers.set(ship, blockerConfig, template)` (`template` is optional). This function returns blocker ID.
