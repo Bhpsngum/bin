@@ -3,7 +3,7 @@ This file covers what has changed after the 4.1 version only
 Any changes before the 4.1 version are not recorded.
 
 # 4.1.0
-## Mar 6, 2024
+## Mar 23, 2024
 
 ### Builds
 - pre-release
@@ -39,6 +39,9 @@ Any changes before the 4.1 version are not recorded.
 #### Blunderbuss
 - (+) Ability speed 75 > 85
 
+#### BFG
+- (-) Ability lazer DMG decreases when going further from ship
+
 #### Chimera
 - (–) Removed energy regeneration after ability
 
@@ -64,10 +67,17 @@ Any changes before the 4.1 version are not recorded.
 - (–) Base E-regen 65 > 63
 - (–) Ability mass 360 > 300
 
+#### Kunai
+- (-) Teleporting some specific ships gains Kunai no invulnerability afterwards
+
 #### Lancelot
 - (X) New ability model
 - (+) Base zoom 1.0x > 0.85x
 - (+) Ability zoom 1.0x > 0.85x
+
+#### Marauder
+- (-) 0.25s of delay before shooting upon ability cast
+- (+) Ships teleporting Marauder while on ability might be "nerfed" afterwards
 
 #### Megalodon
 - (X) Ability anti-troll added
@@ -128,8 +138,7 @@ Any changes before the 4.1 version are not recorded.
 
 #### Sigma
 - (X) New ability model added
-- (–) Ability can now be affected by other non-damaging abilities 
-- (–) Ability can now be hit by non-laser damage (e.g O-Defender torp)
+- (–) Ability state can now be affected by other abilities (including damage-dealing ones)
 - (–) Ability size 1.88 > 1.98
 
 #### Thunder
@@ -166,7 +175,17 @@ Any changes before the 4.1 version are not recorded.
 - (X) Valkyrie now cannot be healed by any healing fields
 
 #### Viking
-- (–) Offensive form laser speed 390 > 360
+- (*) Offensive form changes:
+	- (-) Laser speed 390 > 360
+	- (+) Health 275 > 300
+	- (-) Laser range 2500 > 2300
+	- (+) Laser damage 130 > 150
+	- (-) Laser speed 550 > 390
+	- (-) Energy regen 65 > 60
+	- (+) Mass 300 > 333
+	- (-) Speed 95 > 80
+	- (-) Rotation 80 > 50
+- (-) Offensive form 
 - (–) Defensive form E-regen 70 > 65
 
 #### Vulcan
@@ -174,6 +193,7 @@ Any changes before the 4.1 version are not recorded.
 - (X) New Lower form model
 - (–) Higher form E-regen 100 > 90
 - (–) Higher form laser rate 0.2 > 0.185
+- (-) E-regen when switching form full > half max E-cap
 
 #### Warthog
 - (X) New base model
@@ -197,22 +217,35 @@ Any changes before the 4.1 version are not recorded.
 ### Gameplay
 - Score boosting mechanism adjusted to prevent massive point increase late-game
 - Ship limit for MS and Main modes 3 --> 2
+- Improve team auto-balance algorithm
+- Team points table shows value up to decimal points if more than one winning team has same integer value as their points.
 ### Resources
-- Reworked some textures and OBJs thanks to Caramel and Notus.
+- Rework some textures and OBJs thanks to Caramel and Notus.
 ### Code and hosting
 #### General
-- All template names can now be referred using their aliases in related commands or methods, e.g O-Defender --> odef, Advanced-Fighter --> advf
+- All template names can now be referred using their aliases in related commands or methods, e.g O-Defender --> odef, Advanced-Fighter --> advf.
+- Various bug fixes and enhancements.
 #### Commands
 - Add `banregex <regex>` command to ban players by RegExp.
 - Add `hide <template>` and `unhide <template>` to hide/unhide ships from list of playable ships.
 - All ban-related commands (`ban`, `banphrase` and `banregex`) now apply to any ship currently staying in the game if they match the banning condition.
-- Add `time <time>` command to set/view timer value while mod is running.
-- Add `elapsed` command to see how long the game has been running.
+- Add `time <time>` command to set/view timer value while mod is running and to view elapsed time.
+- Add `lockdown <mode> <duration>` command to prevent new players from joining the game.
+- Add `unspec <id>` to turn a spectator (not kicked) to player.
+- Add `player <id>` to show a player's info by ID.
+- Rework `info` command.
 #### Gameplay code
 - Add `GAME_OPTIONS.spectator_hue` to set spectator hue for Main, MS and Battlefield modes.
 - Add `GAME_OPTIONS.stage_points` as a factor to control score boost.
 - Add `BASES.spawning_invulnerability_distance_limit_ratio` to control spawning invulnerability after leaving base to a certain range.
+- Add map property `isolating_point` to specify a point where kicked and locked down ships will be placed in.
 #### Ability System functionalities
+- Add new Helper function `HelperFunctions.addAlien(options, options_when_spawned)`.
+- Add new option for some parameters in `AbilityManager.assign(...args)`:
+	- `ignoreReset.nameset`: Do not change the ship name binding to this player in usage limit data after assignment.
+	- You can defined `bypass.others` and `ignoreReset.others` to define default values for options you don't specify.
+
+	e.g `bypass = { others: true, limit: false }` will bypass everything but ship limit.
 - New ship's custom properties added:
 	- `ship.custom.anti_teleportation`: Marks that this ship should immune to teleporting
 	- `ship.custom.nerf_teleporters`: Marks that any ship trying to teleport this ship should be nerfed 
