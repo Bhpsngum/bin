@@ -1,5 +1,4 @@
 # Revamp change summary
-# Summary
 ## H-Mercury
 ### lasers
 #### 0
