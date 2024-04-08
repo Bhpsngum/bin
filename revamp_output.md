@@ -1,4 +1,4 @@
-# Revamp change summary
+# Revamp Ship Changes Summary
 ## H-Mercury
 ### lasers
 #### 0
@@ -56,7 +56,7 @@
 - **New**: 2.823
 ### next
 - **Old**: *None*
-- **New**:403,404
+- **New**: [403,404]
 ## Vanguard
 ### specs
 #### ship
@@ -358,10 +358,10 @@
 - **Old**: X: -4.500 | Y: -1.000 | Z: -0.95
 - **New**: X: -1.750 | Y: -2.250 | Z: -0.75
 #### 3
-- **Old**: [object Object]
+- **Old**: {"angle":0,"damage":"7/7","rate":4,"type":1,"speed":"150/150","number":1,"spread":0,"error":0,"recoil":0,"position":"X: 2.500 | Y: -2.500 | Z: -1"}
 - **New**: *None*
 #### 4
-- **Old**: [object Object]
+- **Old**: {"angle":0,"damage":"7/7","rate":4,"type":1,"speed":"150/150","number":1,"spread":0,"error":0,"recoil":0,"position":"X: -2.500 | Y: -2.500 | Z: -1"}
 - **New**: *None*
 ### radius
 - **Old**: 6.5
